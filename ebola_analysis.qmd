@@ -1,0 +1,256 @@
+---
+title: "Ebola Analysis"
+format: 
+    html: 
+        code-fold: true
+        toc: true
+editor: visual
+execute: 
+  warning: false
+---
+
+# Set up
+
+```{r}
+library(tidyverse)
+library(readxl) #library(haven)
+library(gt)
+library(epiR)
+```
+
+```{r}
+
+ebola_data_raw <-  read_xlsx('Ebola_Sierra Leone.xlsx')
+
+ebola_data_raw
+
+```
+
+::: panel-tabset
+## Order 1
+
+### Female/Male-Negative/Positive
+
+```{r}
+ebola_data_fm_np <- ebola_data_raw %>% 
+    mutate(
+        sex = factor(sex, 
+                     levels = c(1,2),
+                     labels = c("female", "male")),
+        status = factor(status,
+                        levels = c(0,1),
+                        labels = c("negative", "positive") )
+    )
+
+ebola_data_fm_np
+```
+
+## Order 2
+
+### Female/Male-Positive/Negative
+
+```{r}
+ebola_data_fm_pn <- ebola_data_raw %>% 
+    mutate(
+        sex = factor(sex, 
+                     levels = c(1,2),
+                     labels = c("female", "male")),
+        status = factor(status,
+                        levels = c(1,0),
+                        labels = c("positive", "negative") )
+    )
+
+ebola_data_fm_pn
+```
+
+## Order 3
+
+### Male/Female-Negative/Positive
+
+```{r}
+ebola_data_mf_np <- ebola_data_raw %>% 
+    mutate(
+        sex = factor(sex, 
+                     levels = c(2,1),
+                     labels = c("male", "female")),
+        status = factor(status,
+                        levels = c(0,1),
+                        labels = c("negative", "positive") )
+    )
+
+ebola_data_mf_np
+```
+
+## Order 4
+
+### Male/Female-Positive/Negative
+
+```{r}
+ebola_data_mf_pn <- ebola_data_raw %>% 
+    mutate(
+        sex = factor(sex, 
+                     levels = c(2,1),
+                     labels = c("male", "female")),
+        status = factor(status,
+                        levels = c(1,0),
+                        labels = c("positive", "negative") )
+    )
+
+ebola_data_mf_pn
+```
+:::
+
+# Contingency Tables
+
+::: panel-tabset
+## contingency_table_fm_np
+
+```{r}
+
+contingency_table_fm_np <- table(ebola_data_fm_np$sex, ebola_data_fm_np$status)
+
+contingency_table_fm_np
+```
+
+## contingency_table_fm_pn
+
+```{r}
+
+contingency_table_fm_pn <- table(ebola_data_fm_pn$sex, ebola_data_fm_pn$status)
+
+contingency_table_fm_pn
+```
+
+## contingency_table_mf_np
+
+```{r}
+
+contingency_table_mf_np <- table(ebola_data_mf_np$sex, ebola_data_mf_np$status)
+
+contingency_table_mf_np
+```
+
+## contingency_table_mf_pn
+
+```{r}
+
+contingency_table_mf_pn <- table(ebola_data_mf_pn$sex, ebola_data_mf_pn$status)
+
+contingency_table_mf_pn
+```
+:::
+
+# Chi-Square Tests
+
+::: panel-tabset
+## fm_np
+
+```{r}
+
+chisq.test(contingency_table_fm_np)
+```
+
+## fm_pn
+
+```{r}
+
+chisq.test(contingency_table_fm_pn)
+```
+
+## mf_np
+
+```{r}
+
+chisq.test(contingency_table_mf_np)
+```
+
+## mf_pn
+
+```{r}
+
+chisq.test(contingency_table_mf_pn)
+```
+:::
+
+# Odds Ratios
+
+::: panel-tabset
+## fm_np
+
+```{r}
+
+epi.2by2(contingency_table_fm_np, method = 'case.control' )
+```
+
+## fm_pn
+
+```{r}
+
+epi.2by2(contingency_table_fm_pn, method = 'case.control' )
+```
+
+## mf_np
+
+```{r}
+
+epi.2by2(contingency_table_mf_np, method = 'case.control' )
+
+```
+
+## mf_pn
+
+```{r}
+epi.2by2(contingency_table_mf_pn, method = 'case.control' )
+```
+:::
+
+# Logistic Regression
+
+::: panel-tabset
+## fm_np
+
+```{r}
+
+logistic_model_fm_np <- glm(status ~ sex, 
+                   data = ebola_data_fm_np, 
+                   family = binomial)
+
+# Print the logistic regression model summary
+summary(logistic_model_fm_np)
+```
+
+## fm_pn
+
+```{r}
+logistic_model_fm_pn <- glm(status ~ sex, 
+                   data = ebola_data_fm_pn, 
+                   family = binomial)
+
+# Print the logistic regression model summary
+summary(logistic_model_fm_pn)
+```
+
+## mf_np
+
+```{r}
+
+logistic_model_mf_np <- glm(status ~ sex, 
+                   data = ebola_data_mf_np, 
+                   family = binomial)
+
+# Print the logistic regression model summary
+summary(logistic_model_mf_np)
+```
+
+## mf_pn
+
+```{r}
+
+logistic_model_mf_pn <- glm(status ~ sex, 
+                   data = ebola_data_mf_pn, 
+                   family = binomial)
+
+# Print the logistic regression model summary
+summary(logistic_model_mf_pn)
+```
+:::
