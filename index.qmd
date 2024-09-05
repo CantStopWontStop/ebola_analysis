@@ -16,6 +16,8 @@ library(tidyverse)
 library(readxl) #library(haven)
 library(gt)
 library(epiR)
+
+theme_set(theme_minimal())
 ```
 
 ```{r}
@@ -39,7 +41,20 @@ ebola_data_fm_np <- ebola_data_raw %>%
                      labels = c("female", "male")),
         status = factor(status,
                         levels = c(0,1),
-                        labels = c("negative", "positive") )
+                        labels = c("negative", "positive") ),       # Convert to factor
+        # Create 'age_group' based on the 'age' column
+        age_group = case_when(
+            age < 5 ~ "0-4", 
+            age >= 5 & age < 15 ~ "5-14",
+            age >= 15 & age < 25 ~ "15-24",
+            age >= 25 & age < 45 ~ "25-44",
+            age >= 45 & age < 65 ~ "45-64",
+            age >= 65 ~ "65+",
+            TRUE ~ NA_character_  # Handle missing values by assigning NA
+        ),
+        # Convert 'age_group' to factor with specified order
+        age_group = factor(age_group, levels = c("0-4", "5-14", "15-24", "25-44", "45-64", "65+"))
+
     )
 
 ebola_data_fm_np
@@ -57,7 +72,20 @@ ebola_data_fm_pn <- ebola_data_raw %>%
                      labels = c("female", "male")),
         status = factor(status,
                         levels = c(1,0),
-                        labels = c("positive", "negative") )
+                        labels = c("positive", "negative") ),       # Convert to factor
+        # Create 'age_group' based on the 'age' column
+        age_group = case_when(
+            age < 5 ~ "0-4", 
+            age >= 5 & age < 15 ~ "5-14",
+            age >= 15 & age < 25 ~ "15-24",
+            age >= 25 & age < 45 ~ "25-44",
+            age >= 45 & age < 65 ~ "45-64",
+            age >= 65 ~ "65+",
+            TRUE ~ NA_character_  # Handle missing values by assigning NA
+        ),
+        # Convert 'age_group' to factor with specified order
+        age_group = factor(age_group, levels = c("0-4", "5-14", "15-24", "25-44", "45-64", "65+"))
+
     )
 
 ebola_data_fm_pn
@@ -75,7 +103,20 @@ ebola_data_mf_np <- ebola_data_raw %>%
                      labels = c("male", "female")),
         status = factor(status,
                         levels = c(0,1),
-                        labels = c("negative", "positive") )
+                        labels = c("negative", "positive") ),       # Convert to factor
+        # Create 'age_group' based on the 'age' column
+        age_group = case_when(
+            age < 5 ~ "0-4", 
+            age >= 5 & age < 15 ~ "5-14",
+            age >= 15 & age < 25 ~ "15-24",
+            age >= 25 & age < 45 ~ "25-44",
+            age >= 45 & age < 65 ~ "45-64",
+            age >= 65 ~ "65+",
+            TRUE ~ NA_character_  # Handle missing values by assigning NA
+        ),
+        # Convert 'age_group' to factor with specified order
+        age_group = factor(age_group, levels = c("0-4", "5-14", "15-24", "25-44", "45-64", "65+"))
+
     )
 
 ebola_data_mf_np
@@ -93,7 +134,20 @@ ebola_data_mf_pn <- ebola_data_raw %>%
                      labels = c("male", "female")),
         status = factor(status,
                         levels = c(1,0),
-                        labels = c("positive", "negative") )
+                        labels = c("positive", "negative") ),       # Convert to factor
+        # Create 'age_group' based on the 'age' column
+        age_group = case_when(
+            age < 5 ~ "0-4", 
+            age >= 5 & age < 15 ~ "5-14",
+            age >= 15 & age < 25 ~ "15-24",
+            age >= 25 & age < 45 ~ "25-44",
+            age >= 45 & age < 65 ~ "45-64",
+            age >= 65 ~ "65+",
+            TRUE ~ NA_character_  # Handle missing values by assigning NA
+        ),
+        # Convert 'age_group' to factor with specified order
+        age_group = factor(age_group, levels = c("0-4", "5-14", "15-24", "25-44", "45-64", "65+"))
+
     )
 
 ebola_data_mf_pn
@@ -254,3 +308,232 @@ logistic_model_mf_pn <- glm(status ~ sex,
 summary(logistic_model_mf_pn)
 ```
 :::
+
+
+
+# Review
+
+## Head and Tail Functions
+```{r}
+ebola_data_fm_pn %>% 
+    arrange(desc(age)) %>% 
+    head()
+```
+
+```{r}
+ebola_data_fm_pn %>% 
+    drop_na(age) %>% 
+    arrange(age) %>% 
+    tail()
+```
+
+## Summary Function
+```{r}
+
+ebola_data_fm_pn %>%
+    summary()
+```
+
+
+
+```{r}
+ebola_data_fm_pn$age %>% 
+    summary()
+
+
+summary(ebola_data_fm_pn$age)
+```
+
+## Summarise Function
+```{r}
+
+ebola_data_fm_pn %>% 
+    summarise( mean_age = mean(age, na.rm = TRUE),
+               median_age = median(age, na.rm =TRUE),
+               sd_age = sd(age, na.rm = TRUE),
+               min_age = min(age, na.rm = TRUE),
+               max_age = max(age, na.rm = TRUE))
+```
+
+```{r}
+ebola_data_fm_pn %>% 
+    summarize(count = n(), 
+              age_years = sum(age, na.rm = TRUE))
+```
+
+### Summarise and Group_by Functions
+```{r}
+ 
+ebola_data_fm_pn %>% 
+    # group my data by district
+    
+    group_by(district)  %>% 
+    summarize(count = n(),
+              max_age = max(age, na.rm = TRUE)
+              )
+```
+
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na(sex) %>% 
+    group_by(district, sex) %>% 
+    summarise(count = n(), 
+              max_age = max(age, na.rm = TRUE))  # %>% 
+    # arrange( %>% desc())
+```
+
+The number of positive and negative cases for each district.
+
+```{r}
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+    group_by(district, status) %>% 
+    summarise(count = n())
+```
+
+The number of positive and negative cases for male and female.
+
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+   group_by(status, sex) %>% 
+    summarise(count = n())
+```
+
+## Table and Prop.Table Functions
+```{r}
+
+contingency_table <- table(ebola_data_fm_pn$sex, ebola_data_fm_pn$status)
+
+contingency_table
+```
+
+```{r}
+
+prop.table(contingency_table)
+```
+
+
+## Proportion Table Using Dplyr
+
+### Un-grouped vs Grouped
+```{r}
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+    group_by(sex, status) %>% 
+    summarise(freq = n() ) %>% 
+    ungroup() %>% 
+    mutate(prop = freq / sum(freq),
+           percent = prop * 100)
+```
+
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+    group_by(sex, status) %>% 
+    summarise(freq = n() ) %>% 
+ #   ungroup() %>% 
+    mutate(prop = freq / sum(freq),
+           percent = prop * 100)
+```
+
+
+## Visualisation
+### Histogram
+```{r}
+
+ebola_data_fm_pn %>% 
+    ggplot(aes(x = age)) + 
+    geom_histogram(aes(fill = sex), color = "black") +
+    labs(title = "Distrubition of Ebola Data by Age",
+         x  = "Age",
+         y = "Frequency") +
+    scale_x_continuous(limits = c(0, 100), 
+                       breaks = c(0, 10, 20, 30, 40, 
+                                  50, 60, 70,80, 90,100)) +
+    theme_minimal()
+```
+
+#### Facet Wrap
+```{r}
+
+ebola_data_fm_pn %>% 
+    ggplot(aes(x = age)) + 
+    geom_histogram(aes(fill = sex), color = "black") +
+    labs(title = "Distrubition of Ebola Data by Age",
+         x  = "Age",
+         y = "Frequency") +
+    scale_x_continuous(limits = c(0, 100), 
+                       breaks = c(0, 10, 20, 30, 40, 
+                                  50, 60, 70,80, 90,100)) +
+    facet_wrap(~status) +
+    theme_minimal()
+```
+### Boxplots
+
+#### Setting Color Uniformly
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na(sex) %>% 
+    ggplot(aes(y = age, x = sex)) +
+    geom_boxplot(aes(fill = sex)) +
+    geom_boxplot(fill = "orange")
+```
+
+#### Mapping Colors to a Variable
+```{r}
+
+
+ebola_data_fm_pn %>% 
+    drop_na(sex) %>% 
+    ggplot(aes(y = age, x = sex, fill = sex)) +
+    geom_boxplot() +
+    scale_fill_manual(values = c("pink", "blue")) +
+    facet_wrap(~district, ncol = 2)
+```
+
+### Pie Chart
+```{r}
+
+sex_data <- ebola_data_fm_pn %>% 
+    group_by(sex) %>% 
+    summarise(count = n()) %>% 
+    mutate(prop = count / sum(count))
+
+sex_data
+```
+
+```{r}
+sex_data %>% 
+    ggplot(aes(x= "", y= prop, fill = sex)) +
+    geom_bar(stat = 'identity') +
+    coord_polar("y") +
+    theme_void() 
+```
+
+### Scatter Plots
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+    filter(age >= 65) %>% 
+    ggplot(aes(x = date_of_onset, 
+               y = date_of_sample, 
+               colour = age)) +
+    geom_point(aes(size = age)) 
+```
+
+```{r}
+
+ebola_data_fm_pn %>% 
+    drop_na() %>% 
+    filter(age >= 65) %>% 
+    ggplot(aes(x = date_of_onset, 
+               y = date_of_sample, 
+               colour = age)) +
+    geom_point(aes(size = sex)) 
+```
