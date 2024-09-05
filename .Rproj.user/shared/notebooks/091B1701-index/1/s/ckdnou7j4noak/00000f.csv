@@ -1,0 +1,20 @@
+"0",""
+"0","ebola_data %>% "
+"0","    ggplot(aes(x = age)) + "
+"0","    geom_histogram(aes(fill = sex), color = ""black"") +"
+"0","    labs(title = ""Distrubition of Ebola Data by Age"","
+"0","         x  = ""Age"","
+"0","         y = ""Frequency"") +"
+"0","    scale_x_continuous(limits = c(0, 100), "
+"0","                       breaks = c(0, 10, 20, 30, 40, "
+"0","                                  50, 60, 70,80, 90,100)) +"
+"0","    facet_wrap(~status) +"
+"0","    theme_minimal()"
+"1","[38;5;231m`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.[39m
+"
+"2","Warning:"
+"2"," [38;5;231mRemoved 956 rows containing non-finite values (`stat_bin()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;231mRemoved 12 rows containing missing values (`geom_bar()`).[39m
+"

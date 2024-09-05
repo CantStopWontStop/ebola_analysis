@@ -1,0 +1,28 @@
+{
+    "id": "F19542FC",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1725522431842.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "id": "7d1a0addc67049a7b926902fc1e77697",
+        "name": "logistic_model",
+        "title": "logistic_model",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2466321603649696626,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1725522431842,
+    "read_only": false,
+    "read_only_alternatives": []
+}

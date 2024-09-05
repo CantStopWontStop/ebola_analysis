@@ -1,0 +1,8 @@
+"0",""
+"0","ebola_data %>% "
+"0","    drop_na(sex) %>% "
+"0","    ggplot(aes(y = age, x = sex)) +"
+"0","    geom_boxplot(fill = ""orange"")"
+"2","Warning:"
+"2"," [38;5;231mRemoved 743 rows containing non-finite values (`stat_boxplot()`).[39m
+"
